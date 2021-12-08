@@ -74,7 +74,7 @@ spec:
           workspace: pipeline-shared-data
       params:
         - name: image-with-tag
-          value: "quay.io/yukihiro_azuma1_ibm/express-sample-app=$(params.image-repo):$(tasks.clone-repository.results.commit)"
+          value: "quay.io/yukihiro_azuma1_ibm/pisces-search-app-api=$(params.image-repo):$(tasks.clone-repository.results.commit)"
     - name: test-deploy
       runAfter:
         - kustomize-build
