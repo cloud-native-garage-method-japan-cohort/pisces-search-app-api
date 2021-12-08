@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: pisces-search-app-api
+spec:
+  serviceAccountName: tekton-triggers-sa
+  triggers:
+    - bindings:
+        - ref: pisces-search-app-api-pipeline-triggerbinding
+      template:
+        ref: pisces-search-app-api-pipeline-triggertemplate
