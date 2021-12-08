@@ -31,7 +31,7 @@ spec:
           - name: PROTOCOLS
           - name: LOG_LEVEL
             value: debug
-          image: quay.io/yukihiro_azuma1_ibm/pisces-search-app-api
+          image: quay.io/yukihiro_azuma1_ibm/pisces-search-app-api:d90c742ee626048c4d1e2032eb836255e4036561
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
