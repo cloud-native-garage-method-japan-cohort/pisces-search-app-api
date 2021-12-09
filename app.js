@@ -6,30 +6,13 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const path = require('path');
 
+const app = express();
+const cors = require('cors');
+app.use(cors());
+
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
 const mockRouter = require('./routes/mock')
-const cors = require('cors');
-
-const app = express();
-
-app.use(cors());
-const allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, access_token'
-  )
-
-  // intercept OPTIONS method
-  if ('OPTIONS' === req.method) {
-    res.send(200)
-  } else {
-    next()
-  }
-}
-app.use(allowCrossDomain)
 
 
 app.use(logger('dev'));
