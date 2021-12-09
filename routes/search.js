@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')({ origin: true });
 
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const {IamAuthenticator} = require('ibm-watson/auth');
@@ -130,6 +131,13 @@ const runQuery = async (searchStr, item_num, type) => {
 
 
 router.post('/', async (req, res) => {
+  if (req.method == "OPTIONS") {
+    cors(req, res, () => {
+      response.status(200).send()
+    });
+    return
+  }
+
   try {
     console.debug(JSON.stringify(req.body))
 
