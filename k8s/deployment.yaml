@@ -31,6 +31,25 @@ spec:
           - name: PROTOCOLS
           - name: LOG_LEVEL
             value: debug
+          - name: DISCOVERY_VERSION
+            value: "2019-04-30"
+          - name: DISCOVERY_URL
+            value: "https://api.eu-gb.discovery.watson.cloud.ibm.com"
+          - name: DISCOVERY_API_KEY
+            valueFrom:
+              secretKeyRef: 
+                name: discovery-keys 
+                key: DISCOVERY_API_KEY
+          - name: DISCOVERY_ENVIRONMENT
+            valueFrom:
+              secretKeyRef: 
+                name: discovery-keys 
+                key: DISCOVERY_ENVIRONMENT
+          - name: DISCOVERY_COLLECTION
+            valueFrom:
+              secretKeyRef: 
+                name: discovery-keys 
+                key: DISCOVERY_COLLECTION
           image: quay.io/yukihiro_azuma1_ibm/pisces-search-app-api
           imagePullPolicy: IfNotPresent
           livenessProbe:

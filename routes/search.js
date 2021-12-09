@@ -2,19 +2,19 @@ const express = require('express');
 
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const {IamAuthenticator} = require('ibm-watson/auth');
-const config = require('config');
+const getConfig = require('../tools/get-config');
+const config = getConfig();
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-
 // 接続情報
 const discovery = new DiscoveryV1({
-  version: config.get('watson.discovery.version'),
+  version: config.watson.discovery.version,
   authenticator: new IamAuthenticator({
-    apikey: config.get('watson.discovery.apikey'),
+    apikey: config.watson.discovery.apikey,
   }),
-  serviceUrl: config.get('watson.discovery.serviceUrl'),
+  serviceUrl: config.watson.discovery.serviceUrl,
 });
 
 const createQuery = (categoryLabel, searchStr) => {
@@ -26,11 +26,10 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
   const query = createQuery(categoryLabel, searchStr);
 
   const queryParams = {
-    environmentId: config.get('watson.discovery.environmentId'),
-    collectionId: config.get('watson.discovery.collectionId'),
+    environmentId: config.watson.discovery.environmentId,
+    collectionId: config.watson.discovery.collectionId,
     highlight: true,
     query,
-    // _return: 'highlight',
   };
 
   console.log(`Running query - ${query}`);
@@ -43,6 +42,7 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
     return queryResponse.result.results.slice(0, item_num).map(result => {
       return {
         text: result.highlight.text[0].replace(/<em>/g, '').replace(/<\/em>/g, ''),
+        // filename: result.highlight['extracted_metadata.filename'][0].replace(/<em>/g, '').replace(/<\/em>/g, ''),
         score: result.result_metadata.score,
         concepts: result.enriched_text.concepts.map((each) => ({
           text:each.text,
