@@ -9,5 +9,5 @@ spec:
   workspaces:
     - name: pipeline-shared-data
       persistentVolumeClaim:
-        claimName: pisces-pvc
+        claimName: pisces-api-pvc
 
