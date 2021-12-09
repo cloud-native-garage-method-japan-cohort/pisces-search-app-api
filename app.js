@@ -8,7 +8,9 @@ const path = require('path');
 
 const app = express();
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: "https://pisces-search-app-web-yukihiro-azuma-pipeline-from-scratch.itzroks-120000mck6-ot8q5v-6ccd7f378ae819553d37d5f2ee142bd6-0000.jp-tok.containers.appdomain.cloud"
+}));
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
@@ -25,7 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use('/', indexRouter);
-app.post('/search', searchRouter);
+app.use('/search', searchRouter);
 app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler
