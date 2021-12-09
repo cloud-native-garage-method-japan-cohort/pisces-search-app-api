@@ -19,10 +19,10 @@ const discovery = new DiscoveryV1({
 
 const createQuery = (categoryLabel, searchStr) => {
   const texts = searchStr.split(' ').map((item) => `text:"${item}"`).join(',');
-  return `enriched_text.categories.label::"${categoryLabel}",(${texts})`;
+  return `(${texts})`;
 };
 
-const runQuery = async (categoryLabel, searchStr) => {
+const runQuery = async (categoryLabel, searchStr, item_num) => {
   const query = createQuery(categoryLabel, searchStr);
 
   const queryParams = {
@@ -30,7 +30,7 @@ const runQuery = async (categoryLabel, searchStr) => {
     collectionId: config.get('watson.discovery.collectionId'),
     highlight: true,
     query,
-    _return: 'highlight',
+    // _return: 'highlight',
   };
 
   console.log(`Running query - ${query}`);
@@ -40,31 +40,35 @@ const runQuery = async (categoryLabel, searchStr) => {
   const results = queryResponse.result.results;
   console.log(JSON.stringify(results, null, '\t'));
   if (queryResponse.result.results && queryResponse.result.results.length > 0) {
-    return queryResponse.result.results[0].highlight.text[0]
-        .replace(/<em>/g, '')
-        .replace(/<\/em>/g, '');
-
-    // const textArray = queryResponse.result.results[0].highlight.text
-    // const filtered = textArray.map((text) => {
-    //   return text.replace(/<em>/g, '').replace(/<\/em>/g, '');
-    // });
-    // return filtered;
+    return queryResponse.result.results.slice(0, item_num).map(result => {
+      return {
+        text: result.highlight.text[0].replace(/<em>/g, '').replace(/<\/em>/g, ''),
+        score: result.result_metadata.score,
+        concepts: result.enriched_text.concepts.map((each) => ({
+          text:each.text,
+          relevance:each.relevance
+        }))
+      }
+    });
   } else {
     return '該当する情報が見つかりませんでした。';
   }
 };
 
 
-router.post('/search', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    if (!req.body.searchText) {
+    console.debug(JSON.stringify(req.body))
+
+    if (!req.body.text) {
       res.status(400).send('Missing search text.');
       return;
     }
 
-    const responseText = await runQuery('/health and fitness/disease', req.body.searchText);
+    const item_num_default = 3
+    const data = await runQuery('/health and fitness/disease', req.body.text, req.body.item_num || item_num_default);
     res.json({
-      responseText,
+      data,
     });
   } catch (error) {
     console.error(error);
