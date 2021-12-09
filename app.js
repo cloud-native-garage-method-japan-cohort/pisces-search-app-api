@@ -8,7 +8,12 @@ const path = require('path');
 
 const app = express();
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 200
+}));
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
