@@ -53,7 +53,7 @@ const removeUnnecessaryWords = (text) => {
   return text
     .replace(/<\/??em>/g, '')
     .replace(/\s/g,'')
-    .replace('- 日本 _ IBM.pdf', '');
+    .replace('-日本_IBM.pdf', '');
 }
 
 const runQuery = async (categoryLabel, searchStr, item_num) => {

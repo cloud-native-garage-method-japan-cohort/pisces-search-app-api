@@ -38,18 +38,18 @@ spec:
           - name: DISCOVERY_API_KEY
             valueFrom:
               secretKeyRef: 
-                name: discovery-keys 
-                key: DISCOVERY_API_KEY
+                name: discovery 
+                key: discovery-api-key
           - name: DISCOVERY_ENVIRONMENT
             valueFrom:
               secretKeyRef: 
-                name: discovery-keys 
-                key: DISCOVERY_ENVIRONMENT
+                name: discovery
+                key: discovery-environment
           - name: DISCOVERY_COLLECTION
             valueFrom:
               secretKeyRef: 
-                name: discovery-keys 
-                key: DISCOVERY_COLLECTION
+                name: discovery
+                key: discovery-collection
           image: quay.io/yukihiro_azuma1_ibm/pisces-search-app-api
           imagePullPolicy: IfNotPresent
           livenessProbe:
