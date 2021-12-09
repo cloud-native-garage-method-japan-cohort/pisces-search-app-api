@@ -64,7 +64,7 @@ const resData = {
 
 app.use('/', indexRouter);
 // app.use('/search', searchRouter);
-app.post('search', (req, res) => {
+app.post('/search', (req, res) => {
   res.json(resData);
 })
 app.use('/mock', mockRouter);
