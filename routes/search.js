@@ -91,7 +91,7 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
     }));
     return restest;
   } else {
-    return '該当する情報が見つかりませんでした。';
+    return [];
   }
 };
 
