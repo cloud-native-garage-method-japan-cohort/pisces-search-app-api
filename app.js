@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 const cors = require('cors');
-app.options('/search', cors());
+app.use(cors());
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
@@ -24,9 +24,9 @@ app.use(cookieParser());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use('/', indexRouter, cors());
-app.use('/search', searchRouter, cors());
-app.use('/mock', mockRouter, cors());
+app.use('/', indexRouter);
+app.use('/search', searchRouter);
+app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

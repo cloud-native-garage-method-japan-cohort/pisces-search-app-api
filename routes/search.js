@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')({ origin: true });
 
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const {IamAuthenticator} = require('ibm-watson/auth');
@@ -134,7 +135,9 @@ router.post('/', async (req, res) => {
     console.debug(JSON.stringify(req.body))
 
     if (!req.body.text) {
-      res.status(400).send('Missing search text.');
+      cors(req, res, () => {
+        res.status(400).send('Missing search text.');
+      })
       return;
     }
 
@@ -144,12 +147,16 @@ router.post('/', async (req, res) => {
       req.body.item_num || item_num_default ,
       req.body.type || 0
     );
-    res.json({
-      data,
-    });
+    cors(req, res, () => {
+      res.json({
+        data,
+      });
+    })
   } catch (error) {
     console.error(error);
-    res.status(500).send('Failed to call watson service');
+    cors(req, res, () => {
+      res.status(500).send('Failed to call watson service');
+    })
   }
 });
 
