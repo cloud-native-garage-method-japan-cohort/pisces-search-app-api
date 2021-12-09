@@ -6,6 +6,7 @@ const path = require('path');
 
 const indexRouter = require('./routes/index');
 const discoveryRouter = require('./routes/discovery');
+const mockRouter = require('./routes/mock')
 const cors = require('cors');
 
 const app = express();
@@ -16,20 +17,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
-app.use('/', indexRouter);
-app.use('/discovery', discoveryRouter);
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
-
 app.use('/', indexRouter);
 app.use('/discovery', discoveryRouter);
+app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
