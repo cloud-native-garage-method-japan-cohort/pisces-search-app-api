@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/', (req, res) => {
+
     const resData = {
         data: [
             {
@@ -78,6 +79,14 @@ router.post('/', (req, res) => {
             }
         ]
     }
+    
+    if(!req.body.item_num){
+        req.body.item_num = 3;
+    }
+    if(!req.body.text){
+        res.status(400).send('Missing search text.');
+    }
+    
     resData.data = resData.data.slice(0,req.body.item_num)
     res.json(resData);
 });
