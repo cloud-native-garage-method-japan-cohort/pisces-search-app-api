@@ -3,6 +3,7 @@ const express = require('express');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const {IamAuthenticator} = require('ibm-watson/auth');
 const getConfig = require('../tools/get-config');
+const e = require('express');
 const config = getConfig();
 
 // eslint-disable-next-line new-cap
@@ -17,39 +18,78 @@ const discovery = new DiscoveryV1({
   serviceUrl: config.watson.discovery.serviceUrl,
 });
 
-const createQuery = (categoryLabel, searchStr) => {
+const createSearchQuery = (categoryLabel, searchStr) => {
   const texts = searchStr.split(' ').map((item) => `text:"${item}"`).join(',');
   return `(${texts})`;
 };
 
+const createSolutionQuery = (sha) => {
+  return `text:"下記の通りです。",extracted_metadata.sha1::${sha}`
+}
+
+const searchSolutions = async (result) => {
+  const solutionQueryParams = {
+    environmentId: config.watson.discovery.environmentId,
+    collectionId: config.watson.discovery.collectionId,
+    highlight: true,
+    query: createSolutionQuery(result.extracted_metadata.sha1) ,
+  };
+  const solutionQueryResponse = await discovery.query(solutionQueryParams);
+  const solutions = solutionQueryResponse.result.results;
+  if(solutions.length > 0){
+    return solutions[0].highlight.text[0]
+      .replace(/<\/??em>/g, '')
+      .replace(/.+下記の通りです。/g,'')
+      .replace(/\s\W.+/g, '')
+      .replace(/^\s/,'')
+      .replace(/\sIBM/g,",IBM")
+      .replace(/\sDb2/g,",Db2")
+      .split(',')
+  }
+  return [];
+}
+
+const removeUnnecessaryWords = (text) => {
+  return text
+    .replace(/<\/??em>/g, '')
+    .replace(/\s/g,'')
+    .replace('- 日本 _ IBM.pdf', '');
+}
+
 const runQuery = async (categoryLabel, searchStr, item_num) => {
-  const query = createQuery(categoryLabel, searchStr);
+  const searchQuery = createSearchQuery(categoryLabel, searchStr);
 
   const queryParams = {
     environmentId: config.watson.discovery.environmentId,
     collectionId: config.watson.discovery.collectionId,
     highlight: true,
-    query,
+    query: searchQuery ,
   };
 
-  console.log(`Running query - ${query}`);
+  console.log(`Running query - ${searchQuery}`);
   const queryResponse = await discovery.query(queryParams);
 
   // let result = '';
   const results = queryResponse.result.results;
-  console.log(JSON.stringify(results, null, '\t'));
+  //console.log(JSON.stringify(results, null, '\t'));
   if (queryResponse.result.results && queryResponse.result.results.length > 0) {
-    return queryResponse.result.results.slice(0, item_num).map(result => {
-      return {
-        text: result.highlight.text[0].replace(/<em>/g, '').replace(/<\/em>/g, ''),
-        // filename: result.highlight['extracted_metadata.filename'][0].replace(/<em>/g, '').replace(/<\/em>/g, ''),
-        score: result.result_metadata.score,
-        concepts: result.enriched_text.concepts.map((each) => ({
-          text:each.text,
-          relevance:each.relevance
-        }))
-      }
-    });
+    
+    const restest = await Promise.all(
+      queryResponse.result.results
+      .slice(0, item_num)
+      .map(async result => {
+        return {
+          text: removeUnnecessaryWords(result.highlight.text[0]),
+          caseName: removeUnnecessaryWords(result.extracted_metadata.filename),
+          solutions: await searchSolutions(result),
+          score: result.result_metadata.score,
+          concepts: result.enriched_text.concepts.map((each) => ({
+            text:each.text,
+            relevance:each.relevance
+          }))
+        }
+    }));
+    return restest;
   } else {
     return '該当する情報が見つかりませんでした。';
   }
