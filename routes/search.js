@@ -73,8 +73,7 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
   const results = queryResponse.result.results;
   //console.log(JSON.stringify(results, null, '\t'));
   if (queryResponse.result.results && queryResponse.result.results.length > 0) {
-    
-    const restest = await Promise.all(
+    return await Promise.all(
       queryResponse.result.results
       .slice(0, item_num)
       .map(async result => {
@@ -89,7 +88,6 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
           }))
         }
     }));
-    return restest;
   } else {
     return [];
   }
@@ -97,6 +95,7 @@ const runQuery = async (categoryLabel, searchStr, item_num) => {
 
 
 router.post('/', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     console.debug(JSON.stringify(req.body))
 
