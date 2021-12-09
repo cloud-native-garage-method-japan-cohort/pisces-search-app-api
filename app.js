@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use('/', indexRouter);
-app.use('/search', searchRouter);
+app.post('/search', searchRouter);
 app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler

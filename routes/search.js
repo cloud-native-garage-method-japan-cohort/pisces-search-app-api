@@ -1,14 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-express.use(cors());
-
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const {IamAuthenticator} = require('ibm-watson/auth');
 const getConfig = require('../tools/get-config');
 const config = getConfig();
-
-// eslint-disable-next-line new-cap
-const router = express.Router();
 
 // 接続情報
 const discovery = new DiscoveryV1({
@@ -131,8 +124,7 @@ const runQuery = async (searchStr, item_num, type) => {
 };
 
 
-router.post('/', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+const router = async (req, res) => {
   try {
     console.debug(JSON.stringify(req.body))
 
@@ -154,6 +146,6 @@ router.post('/', async (req, res) => {
     console.error(error);
     res.status(500).send('Failed to call watson service');
   }
-});
+};
 
 module.exports = router;
