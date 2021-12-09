@@ -15,4 +15,4 @@ spec:
         workspaces:
           - name: pipeline-shared-data
             persistentVolumeClaim:
-              claimName: pisces-api-pvc
+              claimName: yukihiro-azuma-pvc
