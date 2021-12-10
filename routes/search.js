@@ -81,6 +81,8 @@ const removeUnnecessaryWords = (text) => {
   return text
     .replace(/<\/??em>/g, '')
     .replace(/\s/g,'')
+    .replace(/GLYPH<.*>/g,'')
+    .replace(/[\{\}]/,'')
     .replace('-日本_IBM.pdf', '');
 }
 
@@ -107,7 +109,7 @@ const runQuery = async (searchStr, item_num, type) => {
       .map(async result => {
         let text = removeUnnecessaryWords(result.highlight.text[0]);
         let solutions = []
-        if (type == 1){
+        if (type == 1){ // type=0：Solution type=1:事例
           text = await searchOrigin(result);
         } else {
           solutions = await searchSolutions(result)

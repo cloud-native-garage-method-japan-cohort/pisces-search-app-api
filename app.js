@@ -6,32 +6,28 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const path = require('path');
 
+const app = express();
+const cors = require('cors');
+app.use(cors({
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}));
+
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
 const mockRouter = require('./routes/mock')
 
-const app = express();
-const cors = require('cors');
 
-app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-
-app.use('/', indexRouter);
-app.use('/search', searchRouter);
-app.use('/mock', mockRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-app.use(cors());
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
