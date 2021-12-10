@@ -9,3 +9,7 @@ spec:
         - ref: pisces-search-app-api-pipeline-triggerbinding
       template:
         ref: pisces-search-app-api-pipeline-triggertemplate
+      interceptors:
+        - github:
+          eventTypes:
+            - push
