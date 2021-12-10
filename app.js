@@ -17,6 +17,7 @@ app.use(cors({
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
+const uploadRouter = require('./routes/upload');
 const mockRouter = require('./routes/mock')
 
 
@@ -31,6 +32,7 @@ app.set('view engine', 'jade');
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
+app.use('/upload', uploadRouter);
 app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler
